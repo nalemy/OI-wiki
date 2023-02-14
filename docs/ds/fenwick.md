@@ -118,7 +118,7 @@ $c$ 数组就是用来储存原始数组 $a$ 某段区间的和的，也就是�
     === "C++"
     
         ```cpp
-        int lowbit(int x) {
+        unsigned lowbit(unsigned x) {
           // x 的二进制中，最低位的 1 以及后面所有 0 组成的数。
           // lowbit(0b01011000) == 0b00001000
           //          ~~~~^~~~
@@ -174,7 +174,7 @@ $c$ 数组就是用来储存原始数组 $a$ 某段区间的和的，也就是�
     === "C++"
     
         ```cpp
-        int getsum(int x) {  // a[1]..a[x]的和
+        int getsum(signed x) {  // a[1]..a[x]的和
           int ans = 0;
           while (x > 0) {
             ans = ans + c[x];
@@ -326,7 +326,7 @@ $c$ 数组就是用来储存原始数组 $a$ 某段区间的和的，也就是�
     === "C++"
     
         ```cpp
-        void add(int x, int k) {
+        void add(unsigned x, int k) {
           while (x <= n) {  // 不能越界
             c[x] = c[x] + k;
             x = x + lowbit(x);
@@ -409,9 +409,9 @@ $\sum_{i=1}^r d_i$ 并不能推出 $\sum_{i=1}^r d_i \times i$ 的值，所以�
         ```cpp
         int t1[MAXN], t2[MAXN], n;
     
-        inline int lowbit(int x) { return x & (-x); }
+        inline unsigned lowbit(unsigned x) { return x & (-x); }
     
-        void add(int k, int v) {
+        void add(unsigned k, int v) {
           int v1 = k * v;
           while (k <= n) {
             t1[k] += v, t2[k] += v1;
@@ -420,7 +420,7 @@ $\sum_{i=1}^r d_i$ 并不能推出 $\sum_{i=1}^r d_i \times i$ 的值，所以�
           }
         }
     
-        int getsum(int *t, int k) {
+        int getsum(int *t, unsigned k) {
           int ret = 0;
           while (k) {
             ret += t[k];
@@ -526,8 +526,8 @@ $$
     
         ```cpp
         void add(int x, int y, int v) {
-            for (int i = x; i <= n ;i += lowbit(i)) {
-                for (int j = y; j <= m; j += lowbit(j)) {
+            for (unsigned i = x; i <= n ;i += lowbit(i)) {
+                for (unsinged j = y; j <= m; j += lowbit(j)) {
                     // 注意这里必须得建循环变量，不能像一维数组一样直接 while (x <= n) 了
                     c[i][j] += v;
                 }
@@ -540,8 +540,8 @@ $$
         ```cpp
         int sum(int x, int y) {
           int res = 0;
-          for (int i = x; i > 0; i -= lowbit(i)) {
-              for (int j = y; j > 0; j -= lowbit(j)) {
+          for (unsigned i = x; i > 0; i -= lowbit(i)) {
+              for (unsigned j = y; j > 0; j -= lowbit(j)) {
                   res += c[i][j];
               }
           }
@@ -624,11 +624,12 @@ $$
 ???+note "实现"
     ```cpp
     typedef long long ll;
+    typedef unsinged long long ull;
     ll t1[N][N], t2[N][N], t3[N][N], t4[N][N];
     
     void add(ll x, ll y, ll z) {
-      for (int X = x; X <= n; X += lowbit(X))
-        for (int Y = y; Y <= m; Y += lowbit(Y)) {
+      for (ull X = x; X <= n; X += lowbit(X))
+        for (ull Y = y; Y <= m; Y += lowbit(Y)) {
           t1[X][Y] += z;
           t2[X][Y] += z * x;  // 注意是 z * x 而不是 z * X，后面同理
           t3[X][Y] += z * y;
@@ -646,8 +647,8 @@ $$
     
     ll ask(ll x, ll y) {
       ll res = 0;
-      for (int i = x; i; i -= lowbit(i))
-        for (int j = y; j; j -= lowbit(j))
+      for (ull i = x; i; i -= lowbit(i))
+        for (ull j = y; j; j -= lowbit(j))
           res += (x + 1) * (y + 1) * t1[i][j] - (y + 1) * t2[i][j] -
                  (x + 1) * t3[i][j] + t4[i][j];
       return res;
@@ -805,7 +806,7 @@ $i$ 按照 $5 \to 1$ 扫：
 
 ???+note "实现"
     ```cpp
-    int getmax(int l, int r) {
+    int getmax(unsigned l, unsigned r) {
       int ans = 0;
       while (r >= l) {
         ans = max(ans, a[r]);
@@ -849,7 +850,7 @@ $i$ 按照 $5 \to 1$ 扫：
     ```cpp
     void update(int x, int v) {
       a[x] = v;
-      for (int i = x; i <= n; i += lowbit(i)) {
+      for (unsigned i = x; i <= n; i += lowbit(i)) {
         // 枚举受影响的区间
         C[i] = a[i];
         for (int j = 1; j < lowbit(i); j *= 2) {
@@ -883,7 +884,7 @@ $i$ 按照 $5 \to 1$ 扫：
         ```cpp
         // \Theta(n) 建树
         void init() {
-          for (int i = 1; i <= n; ++i) {
+          for (unsigned i = 1; i <= n; ++i) {
             t[i] += a[i];
             int j = i + lowbit(i);
             if (j <= n) t[j] += t[i];
@@ -912,7 +913,7 @@ $i$ 按照 $5 \to 1$ 扫：
     
         ```cpp
         void init() {
-          for (int i = 1; i <= n; ++i) {
+          for (unsigned i = 1; i <= n; ++i) {
             t[i] = sum[i] - sum[i - lowbit(i)];
           }
         }
@@ -939,7 +940,7 @@ $i$ 按照 $5 \to 1$ 扫：
     
         void reset() { ++Tag; }
     
-        void add(int k, int v) {
+        void add(unsigned k, int v) {
           while (k <= n) {
             if (tag[k] != Tag) t[k] = 0;
             t[k] += v, tag[k] = Tag;
@@ -947,7 +948,7 @@ $i$ 按照 $5 \to 1$ 扫：
           }
         }
     
-        int getsum(int k) {
+        int getsum(signed k) {
           int ret = 0;
           while (k) {
             if (tag[k] == Tag) ret += t[k];
